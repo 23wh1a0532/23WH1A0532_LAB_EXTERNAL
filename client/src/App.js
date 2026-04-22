@@ -3,9 +3,10 @@ import { Container, Typography, Box, CircularProgress, Alert, Divider } from '@m
 import NotesTable from './components/NotesTable';
 import { fetchNotes } from './api';
 
+
 function App() {
   const [notes, setNotes] = useState([]);
-  const [allnotes,setAllNotes] = useStste([]);
+  const [allnotes,setAllNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query,setQuery] = useState(" ");
@@ -14,6 +15,7 @@ function App() {
     fetchNotes()
       .then((data) => {
         setNotes(data);
+        setAllNotes(data);
         setLoading(false);
 
       })
@@ -22,17 +24,16 @@ function App() {
         setLoading(false);
       });
   }, []);
-  const handleuser = async()=>{
-    fetch('http://localhost:5004/api/Notes/:id');
-    try{
-      const query = req.query.query;
-      const data = res.json();
-      return res.status(200).json(data);
-    }
-    catch(err){
-      return res.status(500).json("error notes not found");
-    }
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    const filteredNotes = allnotes.filter(note=> note._id.includes(value));
+    setNotes(filteredNotes);
+    console.log(filteredNotes);
+
+
   }
+
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -52,6 +53,13 @@ function App() {
       {!loading && !error && <NotesTable notes={notes} />}
       <Divider sx={{ my: 4 }} />
       {/* TODO: Implement the UI for the corresponding question set */}
+      <h1>Notes Inventory </h1>
+      <div>
+        <h2> enter id:</h2>
+        <input type="text" placeholder="Enter the ID here" onChange={handleSearch}/>
+        <button onClick = {handleSearch}>] Search </button>
+        
+      </div>
 
     </Container>
   );
